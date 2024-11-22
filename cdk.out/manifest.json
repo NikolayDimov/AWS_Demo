@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/d8313a41e9b7d0fde75ac53fecbb016e1cdca2d9424cdd4020e254dc24099794.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/5d832eb3e755155e62c620c8428e563281d404aa0bd4cd6d7d983ff33baca75b.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -98,6 +98,18 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ProcessorApiprocessJSONPOST621223AA"
+          }
+        ],
+        "/CdkStack/ErrorTopic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ErrorTopicA0904A23"
+          }
+        ],
+        "/CdkStack/ErrorSubscription/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ErrorSubscription9DAFDAFE"
           }
         ],
         "/CdkStack/RESTApiEndpoint": [

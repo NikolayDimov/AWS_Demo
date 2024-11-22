@@ -456,6 +456,58 @@
               "version": "2.170.0"
             }
           },
+          "ErrorTopic": {
+            "id": "ErrorTopic",
+            "path": "CdkStack/ErrorTopic",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "CdkStack/ErrorTopic/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SNS::Topic",
+                  "aws:cdk:cloudformation:props": {
+                    "topicName": "ErrorTopic"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sns.CfnTopic",
+                  "version": "2.170.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sns.Topic",
+              "version": "2.170.0"
+            }
+          },
+          "ErrorSubscription": {
+            "id": "ErrorSubscription",
+            "path": "CdkStack/ErrorSubscription",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "CdkStack/ErrorSubscription/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SNS::Subscription",
+                  "aws:cdk:cloudformation:props": {
+                    "endpoint": "atclient115@gmail.com",
+                    "protocol": "email",
+                    "topicArn": {
+                      "Ref": "ErrorTopicA0904A23"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sns.CfnSubscription",
+                  "version": "2.170.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sns.Subscription",
+              "version": "2.170.0"
+            }
+          },
           "RESTApiEndpoint": {
             "id": "RESTApiEndpoint",
             "path": "CdkStack/RESTApiEndpoint",

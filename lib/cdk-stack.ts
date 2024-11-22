@@ -13,12 +13,17 @@ export class CdkStack extends cdk.Stack {
         super(scope, id, props);
 
         // DynamoBD Table creation
-        const errorTable: Table = new Table(this, "ErrorTable", {
+        const errorTable = new Table(this, "ErrorTable", {
             partitionKey: {
                 name: "id",
                 type: AttributeType.STRING,
             },
             billingMode: BillingMode.PAY_PER_REQUEST,
+        });
+
+        // Error Topic
+        const errorTopic = new Topic(this, "ErrorTopic", {
+            topicName: "ErrorTopic",
         });
 
         // API Gateway
@@ -27,17 +32,20 @@ export class CdkStack extends cdk.Stack {
             runtime: Runtime.NODEJS_20_X,
             handler: "handler",
             entry: `${__dirname}/../src/processFunction.ts`,
+            // Lambda function must have right to write in tha db table
+            environment: {
+                TABLE_NAME: errorTable.tableName,
+                TOPIC_ARN: errorTopic.topicArn,
+            },
         });
+
+        // Lambda function must have right to write in tha db table
+        errorTable.grantReadWriteData(processFunction);
 
         // api
         const api = new RestApi(this, "ProcessorApi");
         const resource = api.root.addResource("processJSON");
         resource.addMethod("POST", new LambdaIntegration(processFunction));
-
-        // Error Topic
-        const errorTopic = new Topic(this, "ErrorTopic", {
-            topicName: "ErrorTopic",
-        });
 
         new Subscription(this, "ErrorSubscription", {
             topic: errorTopic,

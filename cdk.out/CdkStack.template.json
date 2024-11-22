@@ -270,10 +270,32 @@
     "aws:cdk:path": "CdkStack/ProcessorApi/Default/processJSON/POST/Resource"
    }
   },
+  "ErrorTopicA0904A23": {
+   "Type": "AWS::SNS::Topic",
+   "Properties": {
+    "TopicName": "ErrorTopic"
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkStack/ErrorTopic/Resource"
+   }
+  },
+  "ErrorSubscription9DAFDAFE": {
+   "Type": "AWS::SNS::Subscription",
+   "Properties": {
+    "Endpoint": "atclient115@gmail.com",
+    "Protocol": "email",
+    "TopicArn": {
+     "Ref": "ErrorTopicA0904A23"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkStack/ErrorSubscription/Resource"
+   }
+  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WQy26DQAxFvyX7iUuTRdVlQtVdHyLdR4YxZHh4UGwaIcS/VzPQ1+oeW/b1lXdw/5BAssGbbAvbbFuXw3RSLBqDNzlPdmTsvM1h+sC8JZOWHGE2LXa5xTN7S7XAa5TngQt1no3DDqbMLwtBZyP7M4qQChyCGNnDcSga0iMKrW4wpSX/mKQlv9O1cyLO82ywdxUq3XCEKSPRQ++i+4pP1Ld+7Ig1dP9UJ8Uq5lggI/HDtaB49rtYjRZ+Ib14G1oLzfPvXMwejBxXYeJt0H7Qf+tpyaln6zSmDv+BWu4+dzt4hGRTi3Pb68DqOoJs0S8Dy/fBhQEAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WQT2/CMAzFPwv34DE4TDtCp932R4U7chOXGVqnqtMhFPW7T0lhY6f3sxW/53gJj08LWMzwrHPrTvOGK4jbgPZk8Kz76C6CrXcVxB1WDZmilgyjabCtHO7FOzoqvGd5HcQG9mIYW4ilnwaSjkZXe1SloLBOYnQFm8GeKGxQ6eoGsajl16So5ZP6llXZy2iw4wMGOuMFYkka1h1n9yu+UNf4S0sSUveu2gY85D0mKEn90FvKsbfiajTxG4Uv71JrotGoKMSd79jmA2TYDpXanrvbqvf1OP4559+maJZDevcxhG4I/wKLWgovjvOoSReFoz58L5fwDIvZUZnn/SCBW4Jy0h8we/vltwEAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "CdkStack/CDKMetadata/Default"
