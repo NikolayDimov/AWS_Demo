@@ -1,5 +1,6 @@
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { PublishCommand, SNSClient } from "@aws-sdk/client-sns";
+import { v4 } from "uuid";
 
 // SDK For SNS and DynamoDB
 // create 2 clients
@@ -14,7 +15,7 @@ export const handler = async (event: any) => {
     const body = JSON.parse(event.body);
     console.log(body);
 
-    if (!event || !body) {
+    if (!body || !body.text) {
         const ttl = Math.floor(Date.now() / 1000) + 30 * 60;
 
         // Invalid JSON
@@ -23,7 +24,7 @@ export const handler = async (event: any) => {
                 TableName: tableName,
                 Item: {
                     id: {
-                        S: Math.random().toString(),
+                        S: v4(),
                     },
                     errorMessage: {
                         S: "Something it wrong!",
@@ -39,7 +40,7 @@ export const handler = async (event: any) => {
         await snsClient.send(
             new PublishCommand({
                 TopicArn: topicArn,
-                Message: `Valid JSON received: ${event.text}`,
+                Message: `Valid JSON received: ${body.text}`,
             })
         );
         console.log("Notification sent!");
