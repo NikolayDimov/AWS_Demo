@@ -19,6 +19,7 @@ export class CdkStack extends cdk.Stack {
                 type: AttributeType.STRING,
             },
             billingMode: BillingMode.PAY_PER_REQUEST,
+            timeToLiveAttribute: "ttl",
         });
 
         // Error Topic
@@ -39,7 +40,8 @@ export class CdkStack extends cdk.Stack {
             },
         });
 
-        // Lambda function must have right to write in tha db table
+        // Lambda function must have right to write and publish in tha db table
+        errorTopic.grantPublish(processFunction);
         errorTable.grantReadWriteData(processFunction);
 
         // api

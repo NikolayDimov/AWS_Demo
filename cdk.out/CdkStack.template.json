@@ -15,12 +15,25 @@
       "AttributeName": "id",
       "KeyType": "HASH"
      }
-    ]
+    ],
+    "TimeToLiveSpecification": {
+     "AttributeName": "ttl",
+     "Enabled": true
+    }
    },
    "UpdateReplacePolicy": "Retain",
    "DeletionPolicy": "Retain",
    "Metadata": {
     "aws:cdk:path": "CdkStack/ErrorTable/Resource"
+   }
+  },
+  "ErrorTopicA0904A23": {
+   "Type": "AWS::SNS::Topic",
+   "Properties": {
+    "TopicName": "ErrorTopic"
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkStack/ErrorTopic/Resource"
    }
   },
   "processFunctionServiceRole043D3FAD": {
@@ -57,6 +70,60 @@
     "aws:cdk:path": "CdkStack/processFunction/ServiceRole/Resource"
    }
   },
+  "processFunctionServiceRoleDefaultPolicyE4A30A49": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sns:Publish",
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "ErrorTopicA0904A23"
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ErrorTableA27F7F12",
+          "Arn"
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "processFunctionServiceRoleDefaultPolicyE4A30A49",
+    "Roles": [
+     {
+      "Ref": "processFunctionServiceRole043D3FAD"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkStack/processFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "processFunction0BCCD85F": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -64,7 +131,17 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "48a5994e3ff0c44321a6a4135f5544353ae458f7d0dd8f988c66e4496a0c48e1.zip"
+     "S3Key": "d24d0d42188a4cf8346166e781426e6971d5d8a7ed1175e3636a6601eb1699a5.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "ErrorTableA27F7F12"
+      },
+      "TOPIC_ARN": {
+       "Ref": "ErrorTopicA0904A23"
+      }
+     }
     },
     "Handler": "index.handler",
     "Role": {
@@ -76,11 +153,12 @@
     "Runtime": "nodejs20.x"
    },
    "DependsOn": [
+    "processFunctionServiceRoleDefaultPolicyE4A30A49",
     "processFunctionServiceRole043D3FAD"
    ],
    "Metadata": {
     "aws:cdk:path": "CdkStack/processFunction/Resource",
-    "aws:asset:path": "asset.48a5994e3ff0c44321a6a4135f5544353ae458f7d0dd8f988c66e4496a0c48e1",
+    "aws:asset:path": "asset.d24d0d42188a4cf8346166e781426e6971d5d8a7ed1175e3636a6601eb1699a5",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }
@@ -270,15 +348,6 @@
     "aws:cdk:path": "CdkStack/ProcessorApi/Default/processJSON/POST/Resource"
    }
   },
-  "ErrorTopicA0904A23": {
-   "Type": "AWS::SNS::Topic",
-   "Properties": {
-    "TopicName": "ErrorTopic"
-   },
-   "Metadata": {
-    "aws:cdk:path": "CdkStack/ErrorTopic/Resource"
-   }
-  },
   "ErrorSubscription9DAFDAFE": {
    "Type": "AWS::SNS::Subscription",
    "Properties": {
@@ -295,7 +364,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WQT2/CMAzFPwv34DE4TDtCp932R4U7chOXGVqnqtMhFPW7T0lhY6f3sxW/53gJj08LWMzwrHPrTvOGK4jbgPZk8Kz76C6CrXcVxB1WDZmilgyjabCtHO7FOzoqvGd5HcQG9mIYW4ilnwaSjkZXe1SloLBOYnQFm8GeKGxQ6eoGsajl16So5ZP6llXZy2iw4wMGOuMFYkka1h1n9yu+UNf4S0sSUveu2gY85D0mKEn90FvKsbfiajTxG4Uv71JrotGoKMSd79jmA2TYDpXanrvbqvf1OP4559+maJZDevcxhG4I/wKLWgovjvOoSReFoz58L5fwDIvZUZnn/SCBW4Jy0h8we/vltwEAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1VQTW/CMAz9LdyLx8ph2hE67bYPtdyRmxgwtElVJ0NV1P8+JWEbO70P2e9ZLuHxaQWrBV5lqfRl2XELoXGoLgVeZR/0ZLC3uoWww7ajojqYROZCjEDY2YFVMhNpfCtq5MGxNdG913PRYd9q3Bur6SzwnuDVG5WmGXsItc0VCT9tx2qKMrO5kPUeRcgJbCIUsoatVxdyWxS6xUOoDuY3NS7T2LNIugAHPqKjK04QahK3GTjV3egLDZ2dejIuuneqcXhMh2VSk1g/Kkq1P+IWlPkbuZPV0cpsnv/m0u0xiM0xTnx4N3j3b706mMoazflv8WFwloevsoRnWC3OwrwcvXHcE9QZvwGIjQtXyAEAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "CdkStack/CDKMetadata/Default"

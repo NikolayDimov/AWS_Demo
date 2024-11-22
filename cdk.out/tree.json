@@ -30,7 +30,11 @@
                         "attributeName": "id",
                         "keyType": "HASH"
                       }
-                    ]
+                    ],
+                    "timeToLiveSpecification": {
+                      "attributeName": "ttl",
+                      "enabled": true
+                    }
                   }
                 },
                 "constructInfo": {
@@ -49,6 +53,30 @@
             },
             "constructInfo": {
               "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.170.0"
+            }
+          },
+          "ErrorTopic": {
+            "id": "ErrorTopic",
+            "path": "CdkStack/ErrorTopic",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "CdkStack/ErrorTopic/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SNS::Topic",
+                  "aws:cdk:cloudformation:props": {
+                    "topicName": "ErrorTopic"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sns.CfnTopic",
+                  "version": "2.170.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sns.Topic",
               "version": "2.170.0"
             }
           },
@@ -106,6 +134,75 @@
                       "fqn": "aws-cdk-lib.aws_iam.CfnRole",
                       "version": "2.170.0"
                     }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "CdkStack/processFunction/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "CdkStack/processFunction/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sns:Publish",
+                                  "Effect": "Allow",
+                                  "Resource": {
+                                    "Ref": "ErrorTopicA0904A23"
+                                  }
+                                },
+                                {
+                                  "Action": [
+                                    "dynamodb:BatchGetItem",
+                                    "dynamodb:BatchWriteItem",
+                                    "dynamodb:ConditionCheckItem",
+                                    "dynamodb:DeleteItem",
+                                    "dynamodb:DescribeTable",
+                                    "dynamodb:GetItem",
+                                    "dynamodb:GetRecords",
+                                    "dynamodb:GetShardIterator",
+                                    "dynamodb:PutItem",
+                                    "dynamodb:Query",
+                                    "dynamodb:Scan",
+                                    "dynamodb:UpdateItem"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "ErrorTableA27F7F12",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Ref": "AWS::NoValue"
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "processFunctionServiceRoleDefaultPolicyE4A30A49",
+                            "roles": [
+                              {
+                                "Ref": "processFunctionServiceRole043D3FAD"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.170.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.170.0"
+                    }
                   }
                 },
                 "constructInfo": {
@@ -149,7 +246,17 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "48a5994e3ff0c44321a6a4135f5544353ae458f7d0dd8f988c66e4496a0c48e1.zip"
+                      "s3Key": "d24d0d42188a4cf8346166e781426e6971d5d8a7ed1175e3636a6601eb1699a5.zip"
+                    },
+                    "environment": {
+                      "variables": {
+                        "TABLE_NAME": {
+                          "Ref": "ErrorTableA27F7F12"
+                        },
+                        "TOPIC_ARN": {
+                          "Ref": "ErrorTopicA0904A23"
+                        }
+                      }
                     },
                     "handler": "index.handler",
                     "role": {
@@ -453,30 +560,6 @@
             },
             "constructInfo": {
               "fqn": "aws-cdk-lib.aws_apigateway.RestApi",
-              "version": "2.170.0"
-            }
-          },
-          "ErrorTopic": {
-            "id": "ErrorTopic",
-            "path": "CdkStack/ErrorTopic",
-            "children": {
-              "Resource": {
-                "id": "Resource",
-                "path": "CdkStack/ErrorTopic/Resource",
-                "attributes": {
-                  "aws:cdk:cloudformation:type": "AWS::SNS::Topic",
-                  "aws:cdk:cloudformation:props": {
-                    "topicName": "ErrorTopic"
-                  }
-                },
-                "constructInfo": {
-                  "fqn": "aws-cdk-lib.aws_sns.CfnTopic",
-                  "version": "2.170.0"
-                }
-              }
-            },
-            "constructInfo": {
-              "fqn": "aws-cdk-lib.aws_sns.Topic",
               "version": "2.170.0"
             }
           },
