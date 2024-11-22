@@ -16,6 +16,9 @@
       "KeyType": "HASH"
      }
     ],
+    "StreamSpecification": {
+     "StreamViewType": "NEW_AND_OLD_IMAGES"
+    },
     "TimeToLiveSpecification": {
      "AttributeName": "ttl",
      "Enabled": true
@@ -161,6 +164,171 @@
     "aws:asset:path": "asset.a481bfaf381d9d764b5b4783c93287f8067973cbe27e9a61187f2c5d028e5f3e",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
+   }
+  },
+  "cleanupFunctionServiceRoleF2D5398B": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkStack/cleanupFunction/ServiceRole/Resource"
+   }
+  },
+  "cleanupFunctionServiceRoleDefaultPolicy8DA0A82F": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sns:Publish",
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "ErrorTopicA0904A23"
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ErrorTableA27F7F12",
+          "Arn"
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": "dynamodb:ListStreams",
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "dynamodb:DescribeStream",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "ErrorTableA27F7F12",
+         "StreamArn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "cleanupFunctionServiceRoleDefaultPolicy8DA0A82F",
+    "Roles": [
+     {
+      "Ref": "cleanupFunctionServiceRoleF2D5398B"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkStack/cleanupFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "cleanupFunction808DE61E": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "38c960100c6550c743711cce3bd46a91793f8b1e0ade993218318c62422270a5.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "ErrorTableA27F7F12"
+      },
+      "TOPIC_ARN": {
+       "Ref": "ErrorTopicA0904A23"
+      }
+     }
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "cleanupFunctionServiceRoleF2D5398B",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x"
+   },
+   "DependsOn": [
+    "cleanupFunctionServiceRoleDefaultPolicy8DA0A82F",
+    "cleanupFunctionServiceRoleF2D5398B"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "CdkStack/cleanupFunction/Resource",
+    "aws:asset:path": "asset.38c960100c6550c743711cce3bd46a91793f8b1e0ade993218318c62422270a5",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "cleanupFunctionDynamoDBEventSourceCdkStackErrorTable7AB3E2C9BB763521": {
+   "Type": "AWS::Lambda::EventSourceMapping",
+   "Properties": {
+    "BatchSize": 5,
+    "EventSourceArn": {
+     "Fn::GetAtt": [
+      "ErrorTableA27F7F12",
+      "StreamArn"
+     ]
+    },
+    "FunctionName": {
+     "Ref": "cleanupFunction808DE61E"
+    },
+    "StartingPosition": "LATEST"
+   },
+   "Metadata": {
+    "aws:cdk:path": "CdkStack/cleanupFunction/DynamoDBEventSource:CdkStackErrorTable7AB3E2C9/Resource"
    }
   },
   "ProcessorApiEE88D53F": {
@@ -364,7 +532,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1VQTW/CMAz9LdyLx8ph2hE67bYPtdyRmxgwtElVJ0NV1P8+JWEbO70P2e9ZLuHxaQWrBV5lqfRl2XELoXGoLgVeZR/0ZLC3uoWww7ajojqYROZCjEDY2YFVMhNpfCtq5MGxNdG913PRYd9q3Bur6SzwnuDVG5WmGXsItc0VCT9tx2qKMrO5kPUeRcgJbCIUsoatVxdyWxS6xUOoDuY3NS7T2LNIugAHPqKjK04QahK3GTjV3egLDZ2dejIuuneqcXhMh2VSk1g/Kkq1P+IWlPkbuZPV0cpsnv/m0u0xiM0xTnx4N3j3b706mMoazflv8WFwloevsoRnWC3OwrwcvXHcE9QZvwGIjQtXyAEAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/21QTW/CMAz9LdyLx+Aw7QjddmNDLXfkJoYF2iSqE1AV9b9PSbqNSTu9DyXPz17C49MCFjO88VzIy7xVDYTaobgUeONDkIPGzsgGwh6bloryqBMZC9YMYW+sEslMpPYNi15Zp4yO7r0eixa7RuJBG0lnhvcEb16L9FphB6EyeUTCnWmVGKLMbCx4dUBmcgzrCAWvYOPFhdwGmaZ4COVR/6S+Xkm72vhe0BatVfoU8/53d9R3ijlVRatO6OiGA4SK2K2tSr0m+kK2NUNH2kX3TtUOT2mDTCriNCX1+xZTUOZbcp9GRiuzcfx9l5aMQVPBD++sd3++l0ddGi1VPnC8LJz54bpcwjMsZmdWat577VRHUGX8AmCK+QTxAQAA"
    },
    "Metadata": {
     "aws:cdk:path": "CdkStack/CDKMetadata/Default"

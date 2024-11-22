@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/28f798f585b5d383c66f1bd4db5dfcf27a8d55c5bc4c1faef8034deae157fccf.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/8e11b3856363c9fddf1d3e0af14954e3b1e4bc2dfdbac4f856f8c4fed321e463.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -62,6 +62,30 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "processFunction0BCCD85F"
+          }
+        ],
+        "/CdkStack/cleanupFunction/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "cleanupFunctionServiceRoleF2D5398B"
+          }
+        ],
+        "/CdkStack/cleanupFunction/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "cleanupFunctionServiceRoleDefaultPolicy8DA0A82F"
+          }
+        ],
+        "/CdkStack/cleanupFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "cleanupFunction808DE61E"
+          }
+        ],
+        "/CdkStack/cleanupFunction/DynamoDBEventSource:CdkStackErrorTable7AB3E2C9/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "cleanupFunctionDynamoDBEventSourceCdkStackErrorTable7AB3E2C9BB763521"
           }
         ],
         "/CdkStack/ProcessorApi/Resource": [

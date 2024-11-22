@@ -1,8 +1,9 @@
 import * as cdk from "aws-cdk-lib";
 import { CfnOutput } from "aws-cdk-lib";
 import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
-import { AttributeType, BillingMode, Table } from "aws-cdk-lib/aws-dynamodb";
-import { Runtime } from "aws-cdk-lib/aws-lambda";
+import { AttributeType, BillingMode, StreamViewType, Table } from "aws-cdk-lib/aws-dynamodb";
+import { Runtime, StartingPosition } from "aws-cdk-lib/aws-lambda";
+import { DynamoEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Subscription, SubscriptionProtocol, Topic } from "aws-cdk-lib/aws-sns";
 import { Construct } from "constructs";
@@ -20,6 +21,7 @@ export class CdkStack extends cdk.Stack {
             },
             billingMode: BillingMode.PAY_PER_REQUEST,
             timeToLiveAttribute: "ttl",
+            stream: StreamViewType.NEW_AND_OLD_IMAGES,
         });
 
         // Error Topic
@@ -40,9 +42,22 @@ export class CdkStack extends cdk.Stack {
             },
         });
 
+        const cleanupFunction = new NodejsFunction(this, "cleanupFunction", {
+            runtime: Runtime.NODEJS_20_X,
+            handler: "handler",
+            entry: `${__dirname}/../src/cleanupFunction.ts`,
+            // Lambda function must have right to write in tha db table
+            environment: {
+                TABLE_NAME: errorTable.tableName,
+                TOPIC_ARN: errorTopic.topicArn,
+            },
+        });
+
         // Lambda function must have right to write and publish in tha db table
         errorTopic.grantPublish(processFunction);
+        errorTopic.grantPublish(cleanupFunction);
         errorTable.grantReadWriteData(processFunction);
+        errorTable.grantReadWriteData(cleanupFunction);
 
         // api
         const api = new RestApi(this, "ProcessorApi");
@@ -54,6 +69,14 @@ export class CdkStack extends cdk.Stack {
             protocol: SubscriptionProtocol.EMAIL,
             endpoint: "atclient115@gmail.com",
         });
+
+        // Trigger for Cleanup Lambda
+        cleanupFunction.addEventSource(
+            new DynamoEventSource(errorTable, {
+                startingPosition: StartingPosition.LATEST,
+                batchSize: 5,
+            })
+        );
 
         // REST API output endpoint
         new CfnOutput(this, "RESTApiEndpoint", {
