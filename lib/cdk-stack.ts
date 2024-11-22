@@ -4,6 +4,7 @@ import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { AttributeType, BillingMode, Table } from "aws-cdk-lib/aws-dynamodb";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+import { Subscription, SubscriptionProtocol, Topic } from "aws-cdk-lib/aws-sns";
 import { Construct } from "constructs";
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
@@ -33,6 +34,18 @@ export class CdkStack extends cdk.Stack {
         const resource = api.root.addResource("processJSON");
         resource.addMethod("POST", new LambdaIntegration(processFunction));
 
+        // Error Topic
+        const errorTopic = new Topic(this, "ErrorTopic", {
+            topicName: "ErrorTopic",
+        });
+
+        new Subscription(this, "ErrorSubscription", {
+            topic: errorTopic,
+            protocol: SubscriptionProtocol.EMAIL,
+            endpoint: "atclient115@gmail.com",
+        });
+
+        // REST API output endpoint
         new CfnOutput(this, "RESTApiEndpoint", {
             value: `https://${api.restApiId}.execute-api.eu-center-1.amazonaws.com/prod/processJSON`,
         });
