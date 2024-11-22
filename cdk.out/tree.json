@@ -149,7 +149,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "c33a0bd2b720283a724b91238149191345839b53022700e45baa2b9d24d1e814.zip"
+                      "s3Key": "48a5994e3ff0c44321a6a4135f5544353ae458f7d0dd8f988c66e4496a0c48e1.zip"
                     },
                     "handler": "index.handler",
                     "role": {
@@ -453,6 +453,14 @@
             },
             "constructInfo": {
               "fqn": "aws-cdk-lib.aws_apigateway.RestApi",
+              "version": "2.170.0"
+            }
+          },
+          "RESTApiEndpoint": {
+            "id": "RESTApiEndpoint",
+            "path": "CdkStack/RESTApiEndpoint",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
               "version": "2.170.0"
             }
           },

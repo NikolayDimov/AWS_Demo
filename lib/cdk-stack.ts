@@ -1,4 +1,5 @@
 import * as cdk from "aws-cdk-lib";
+import { CfnOutput } from "aws-cdk-lib";
 import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { AttributeType, BillingMode, Table } from "aws-cdk-lib/aws-dynamodb";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
@@ -31,5 +32,9 @@ export class CdkStack extends cdk.Stack {
         const api = new RestApi(this, "ProcessorApi");
         const resource = api.root.addResource("processJSON");
         resource.addMethod("POST", new LambdaIntegration(processFunction));
+
+        new CfnOutput(this, "RESTApiEndpoint", {
+            value: `https://${api.restApiId}.execute-api.eu-center-1.amazonaws.com/prod/processJSON`,
+        });
     }
 }

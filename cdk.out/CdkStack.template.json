@@ -64,7 +64,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "c33a0bd2b720283a724b91238149191345839b53022700e45baa2b9d24d1e814.zip"
+     "S3Key": "48a5994e3ff0c44321a6a4135f5544353ae458f7d0dd8f988c66e4496a0c48e1.zip"
     },
     "Handler": "index.handler",
     "Role": {
@@ -80,7 +80,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "CdkStack/processFunction/Resource",
-    "aws:asset:path": "asset.c33a0bd2b720283a724b91238149191345839b53022700e45baa2b9d24d1e814",
+    "aws:asset:path": "asset.48a5994e3ff0c44321a6a4135f5544353ae458f7d0dd8f988c66e4496a0c48e1",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }
@@ -304,6 +304,20 @@
        "Ref": "ProcessorApiDeploymentStageprod67007E1E"
       },
       "/"
+     ]
+    ]
+   }
+  },
+  "RESTApiEndpoint": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "ProcessorApiEE88D53F"
+      },
+      ".execute-api.eu-center-1.amazonaws.com/prod/processJSON"
      ]
     ]
    }
